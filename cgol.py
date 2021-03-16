@@ -8,7 +8,6 @@ from ctypes import *
 #
 
 debug = 0
-size = 45 # Code assumes square grid!
 
 def init_field(fsize):
     """
@@ -19,7 +18,7 @@ def init_field(fsize):
         field[x] = fsize * [0]
     return field
 
-def display_field(dfField):
+def display_field(dfField, size):
     # if dfField is None:
     #     error("In display_field: dfField is None")
     #     return
@@ -171,10 +170,14 @@ def copy_field(in_field, out_field):
     return
 
 def edit_field(in_field, out_field, mode):
+
     return
 
 
 def main():
+
+    size = 45 # Code assumes square grid!
+
     if (debug == 1):
         print('=========================================================================')
         print('=========================================================================')
@@ -204,35 +207,36 @@ def main():
 
     mode = _MODE_INIT
     inputchar = ' '
-
-    while not (ord(inputchar) in (113,114)):   # ord('r') == 114, q == 113
-        display_field(afield)
+    debugcounter = 0
+    while (True):
+        display_field(afield, size)
         print('Choose:')
         print('e - edit starting position')
         print('r - run simulation')
         print('q - quit')
+
+        print(debugcounter, end=' ')
+
         inputchar = msvcrt.getch()
-        if (inputchar == 'e'):
+        if (inputchar == b'e'):
             edit_field(afield, bfield)
             copy_field(afield, bfield)
-        elif (inputchar == 'q'):
-            print('You entered[', inputchar, ']')
+        elif (inputchar == b'q'):
+            #crap = 1 / 0
+            #print('You entered[', inputchar, ']')
             sys.exit(1)
+        elif (inputchar == b'r'):
+            print('You entered[', inputchar, ']')
+            while (True):
+                print('while loop [', inputchar, ']')
+                display_field(afield, size)
+                #time.sleep(0.085)
+                process_field(afield, bfield)
+                copy_field(afield, bfield)
+                #afield = bfield
 
-    inputchar = ' '
-    while (ord(inputchar) != 113):
-        display_field(afield)
-        time.sleep(0.085)
-
-        print('press enter or q ...')
-        inputchar = msvcrt.getch()
-
-        process_field(afield, bfield)
-        copy_field(afield, bfield)
-        #afield = bfield
-
-        # print(afield[0] is afield[1])
-        # print(afield[0][0] is afield[1][0])
+                # print(afield[0] is afield[1])
+                # print(afield[0][0] is afield[1][0])
 
 
 
