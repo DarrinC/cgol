@@ -47,7 +47,14 @@ def home_cursor():
     else:
         exit(-1)
 
-
+def get_keyboard_key():
+    if (os.name == 'nt'):
+        return msvcrt.getch()
+    elif (os.name == 'posix'):
+        return getch()
+    else:
+        exit(-1)
+    
 def init_field(fsize):
     """
     Docstring for init_field(size)
@@ -239,7 +246,7 @@ def main():
 
         print(debugcounter, end=' ')
 
-        inputchar = msvcrt.getch()
+        inputchar = get_keyboard_key()
         if (inputchar == b'e'):
             edit_field(afield, bfield)
             copy_field(afield, bfield)
