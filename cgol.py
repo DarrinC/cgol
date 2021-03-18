@@ -1,9 +1,10 @@
 import time
 import os
-import msvcrt
 import sys
 
-# temp for test?
+if (os.name == 'nt'):
+    import msvcrt
+
 from ctypes import *
 #
 
