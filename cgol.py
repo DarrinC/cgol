@@ -9,6 +9,44 @@ from ctypes import *
 
 debug = 0
 
+def clear_screen():
+    if (os.name == 'nt'):
+        os.system('cls')
+    elif (os.name == 'posix'):
+        os.system('cls')
+    
+
+def home_cursor():
+    if (os.name == 'nt'):
+        ###########################################################################
+        # This code is from: "Terminal control/Cursor positioning - Rosetta Code
+        # "https://rosettacode.org/wiki/Terminal_control/Cursor_positioning#Python
+
+            STD_OUTPUT_HANDLE = -11
+
+            class COORD(Structure):
+                pass
+
+            COORD._fields_ = [("X", c_short), ("Y", c_short)]
+
+            def print_at(r, c, s):
+                h = windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
+                windll.kernel32.SetConsoleCursorPosition(h, COORD(c, r))
+
+                c = s.encode("windows-1252")
+                windll.kernel32.WriteConsoleA(h, c_char_p(c), len(c), None, None)
+
+            print_at(0, 0, "")
+        # end code from "Terminal control/Cursor positioning - Rosetta Code
+        ###########################################################################
+    elif (os.name == 'posix'):
+        # https://rosettacode.org/wiki/Terminal_control/Cursor_positioning#Python
+        # Using ANSI escape sequence, where ESC[y;xH moves curser to row y, col x:
+        print("\033[0;0")
+    else:
+        exit(-1)
+
+
 def init_field(fsize):
     """
     Docstring for init_field(size)
@@ -24,31 +62,10 @@ def display_field(dfField, size):
     #     return
 
     #if(debug != 1):
-    #    os.system('cls')
-
+    #    clear_screen()
 # moved up # from ctypes import *
 
- ###########################################################################
- # This code is from: "Terminal control/Cursor positioning - Rosetta Code
- # "https://rosettacode.org/wiki/Terminal_control/Cursor_positioning#Python
-
-    STD_OUTPUT_HANDLE = -11
-
-    class COORD(Structure):
-        pass
-
-    COORD._fields_ = [("X", c_short), ("Y", c_short)]
-
-    def print_at(r, c, s):
-        h = windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
-        windll.kernel32.SetConsoleCursorPosition(h, COORD(c, r))
-
-        c = s.encode("windows-1252")
-        windll.kernel32.WriteConsoleA(h, c_char_p(c), len(c), None, None)
-
-    print_at(0, 0, "")
- # end code from "Terminal control/Cursor positioning - Rosetta Code
- ###########################################################################
+    home_cursor()
 
     print('    ', end=' ')
 
@@ -169,12 +186,24 @@ def copy_field(in_field, out_field):
 
     return
 
-def edit_field(in_field, out_field, mode):
+def edit_field(in_field, out_field):
+    _MODE_INIT = 1
+    _MODE_EDIT = 2
+    _MODE_RUN  = 3
+
+    mode = _MODE_INIT
 
     return
 
 
 def main():
+    # check OS
+    if (os.name == 'nt'):
+        os.system('cls')
+    elif (os.name == 'posix'):
+        os.system('cls')
+    else:
+        print(os.name,' is not supported, exiting.')
 
     size = 45 # Code assumes square grid!
 
@@ -184,7 +213,7 @@ def main():
         print('=========================================================================')
         print('=========================================================================')
     else:
-        os.system('cls')
+        clear_screen()
 
     afield = init_field(size)
     bfield = init_field(size)
@@ -198,21 +227,13 @@ def main():
     afield[3][4] = 1
     afield[2][5] = 1
 
-    # main loop modes
-    _MODE_INIT = 1
-    _MODE_EDIT = 2
-    _MODE_RUN  = 3
-    # editor modes
-
-
-    mode = _MODE_INIT
     inputchar = ' '
     debugcounter = 0
     while (True):
         display_field(afield, size)
         print('Choose:')
         print('e - edit starting position')
-        print('r - run simulation')
+        print('r - run simulation (^C to quit)')
         print('q - quit')
 
         print(debugcounter, end=' ')
@@ -230,7 +251,7 @@ def main():
             while (True):
                 print('while loop [', inputchar, ']')
                 display_field(afield, size)
-                #time.sleep(0.085)
+                time.sleep(0.085)
                 process_field(afield, bfield)
                 copy_field(afield, bfield)
                 #afield = bfield
