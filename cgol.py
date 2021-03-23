@@ -11,12 +11,37 @@ elif (os.name == 'posix'):
 
 debug = 0
 
+""" Convert bytes to int? - StackOverflow
+
+https://stackoverflow.com/questions/34009653/convert-bytes-to-int
+
+Assuming you're on at least 3.2, there's a built in for this:
+
+int.from_bytes( bytes, byteorder, *, signed=False )
+
+...
+
+The argument bytes must either be a bytes-like object or an iterable producing bytes.
+
+The byteorder argument determines the byte order used to represent the integer. If byteorder 
+is "big", the most significant byte is at the beginning of the byte array. If byteorder is 
+"little", the most significant byte is at the end of the byte array. To request the native 
+byte order of the host system, use sys.byteorder as the byte order value.
+
+The signed argument indicates whether two’s complement is used to represent the integer.
+ """
+
+def int_from_bytes(i):
+    return int.from_bytes(i, "big")
+
 def clear_screen():
     if (os.name == 'nt'):
         os.system('cls')
     elif (os.name == 'posix'):
-        os.system('cls')
+        os.system('clear')
     
+def int_from_bytes(i):
+    return int.from_bytes(i, "big")
 
 def home_cursor():
     if (os.name == 'nt'):
@@ -48,26 +73,69 @@ def home_cursor():
     else:
         exit(-1)
 
-def get_keyboard_key():
-    if (os.name == 'nt'):
-        return msvcrt.getch()
-    elif (os.name == 'posix'):
-        #https://stackoverflow.com/questions/510357/how-to-read-a-single-character-from-the-user
 
-        # POSIX system. Create and return a getch that manipulates the tty.
-        
-        def _getch():
-            fd = sys.stdin.fileno()
-            old_settings = termios.tcgetattr(fd)
-            try:
-                tty.setraw(fd)
-                ch = sys.stdin.read(1)
-            finally:
-                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-            return ch
-        return _getch
+# START code from https://code.activestate.com/recipes/134892/
+# GETCH()-LIKE UNBUFFERED CHARACTER READING FROM STDIN ON BOTH WINDOWS AND UNIX (PYTHON RECIPE)
+# A small utility class to read single characters from standard input, on both Windows and UNIX systems. It provides a getch() function-like instance.
+# Created by Danny Yoo on Fri, 21 Jun 2002 (PSF)
+
+
+
+class _Getch:
+    """Gets a single character from standard input.  Does not echo to the
+screen."""
+    def __init__(self):
+        try:
+            self.impl = _GetchWindows()
+        except ImportError:
+            self.impl = _GetchUnix()
+
+    def __call__(self): return self.impl()
+
+
+class _GetchUnix:
+    def __init__(self):
+        import tty, sys
+
+    def __call__(self):
+        import sys, tty, termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
+
+class _GetchWindows:
+    def __init__(self):
+        import msvcrt
+
+    def __call__(self):
+        import msvcrt
+        return msvcrt.getch()
+
+
+getch = _Getch()
+
+# END code from https://code.activestate.com/recipes/134892/
+
+def get_keyboard_key():
+    key = getch()
+    if ( type(key) == type(b'q') ):
+        return chr(int.from_bytes(key, "big"))
+    elif ( type(key) == type('q') ):
+        return(key)
     else:
+        print('Unexpected input [', key, ']', "of type ", type(key))
         exit(-1)
+
+    #debug_info_print()
+
+    #exit(-1) # debug
+    return key
     
 def init_field(fsize):
     """
@@ -89,7 +157,8 @@ def display_field(dfField, size):
 
     home_cursor()
 
-    print('    ', end=' ')
+    #print('> <-- cursor homed  ', end=' ')
+    #exit(-1)
 
     for col in range(1, size):
         if ((col % 10) == 0):
@@ -220,14 +289,10 @@ def edit_field(in_field, out_field):
 
 def main():
     # check OS
-    if (os.name == 'nt'):
-        os.system('cls')
-    elif (os.name == 'posix'):
-        os.system('cls')
-    else:
+    if not (os.name in ['nt', 'posix'] ):
         print(os.name,' is not supported, exiting.')
 
-    size = 45 # Code assumes square grid!
+    size = 15 # Code assumes square grid!
 
     if (debug == 1):
         print('=========================================================================')
@@ -250,7 +315,7 @@ def main():
     afield[2][5] = 1
 
     inputchar = ' '
-    debugcounter = 0
+    #debugcounter = 0
     while (True):
         display_field(afield, size)
         print('Choose:')
@@ -258,20 +323,22 @@ def main():
         print('r - run simulation (^C to quit)')
         print('q - quit')
 
-        print(debugcounter, end=' ')
+        #print(debugcounter, end=' ')
 
         inputchar = get_keyboard_key()
-        if (inputchar == b'e'):
+        # inputchar = 'q'
+
+        if (inputchar == 'e'):
             edit_field(afield, bfield)
             copy_field(afield, bfield)
-        elif (inputchar == b'q'):
+        elif (inputchar == 'q'):
             #crap = 1 / 0
             #print('You entered[', inputchar, ']')
             sys.exit(1)
-        elif (inputchar == b'r'):
-            print('You entered[', inputchar, ']')
+        elif (inputchar == 'r'):
+            # print('You entered[', inputchar, ']')
             while (True):
-                print('while loop [', inputchar, ']')
+                # print('while loop [', inputchar, ']')
                 display_field(afield, size)
                 time.sleep(0.085)
                 process_field(afield, bfield)
@@ -280,6 +347,9 @@ def main():
 
                 # print(afield[0] is afield[1])
                 # print(afield[0][0] is afield[1][0])
+        # debugging:
+        # else:
+        #    print('You entered[', inputchar, '] with ord() [', ord(inputchar), ']')
 
 
 
