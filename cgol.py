@@ -1,6 +1,23 @@
+import sys
+
+# Python 3.4.10 (default, Nov 14 2019, 22:17:56) 
+# [GCC 5.4.0 20160609] on linux
+# Type "help", "copyright", "credits" or "license" for more information.
+# >>> import sys                                                                                         
+# >>> sys.hexversion
+# 50596592
+
+# require at least python 3.4.10
+
+minimum_python_version = 50596592 # 
+
+if (sys.hexversion < minimum_python_version):
+    exit("Minimum Python version for this program is 3.4.10 (50596592)")
+
+
 import time
 import os
-import sys
+
 from ctypes import *
 
 if (os.name == 'nt'):
