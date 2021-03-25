@@ -393,3 +393,4 @@ The initial pattern constitutes the seed of the system. The first generation is 
  """
 
 
+# 5c842acef43ef9332b56b787a7f56785 *cgol.py
