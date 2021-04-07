@@ -29,8 +29,9 @@ elif (os.name == 'posix'):
 # https://pypi.org/project/colorama/#description
 # Makes ANSI escape character sequences (for producing colored terminal text and cursor positioning) work under MS Windows.
 
-# from colorama import init
-# init()
+#from colorama import init
+from colorama import *
+init()
 
 debug = 0
 
@@ -67,34 +68,45 @@ def int_from_bytes(i):
     return int.from_bytes(i, "big")
 
 def home_cursor():
-    if (os.name == 'nt'):
-        ###########################################################################
-        # This code is from: "Terminal control/Cursor positioning - Rosetta Code
-        # "https://rosettacode.org/wiki/Terminal_control/Cursor_positioning#Python
 
-            STD_OUTPUT_HANDLE = -11
+    print(Cursor.POS(1, 1), end = '')
 
-            class COORD(Structure):
-                pass
+    return
 
-            COORD._fields_ = [("X", c_short), ("Y", c_short)]
+    # if (os.name == 'nt'):
+    #     ###########################################################################
+    #     # This code is from: "Terminal control/Cursor positioning - Rosetta Code
+    #     # "https://rosettacode.org/wiki/Terminal_control/Cursor_positioning#Python
 
-            def print_at(r, c, s):
-                h = windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
-                windll.kernel32.SetConsoleCursorPosition(h, COORD(c, r))
+    #         STD_OUTPUT_HANDLE = -11
 
-                c = s.encode("windows-1252")
-                windll.kernel32.WriteConsoleA(h, c_char_p(c), len(c), None, None)
+    #         class COORD(Structure):
+    #             pass
 
-            print_at(0, 0, "")
-        # end code from "Terminal control/Cursor positioning - Rosetta Code
-        ###########################################################################
-    elif (os.name == 'posix'):
-        # https://rosettacode.org/wiki/Terminal_control/Cursor_positioning#Python
-        # Using ANSI escape sequence, where ESC[y;xH moves curser to row y, col x:
-        print("\033[0;0")
-    else:
-        exit(-1)
+    #         COORD._fields_ = [("X", c_short), ("Y", c_short)]
+
+    #         def print_at(r, c, s):
+    #             h = windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
+    #             windll.kernel32.SetConsoleCursorPosition(h, COORD(c, r))
+
+    #             c = s.encode("windows-1252")
+    #             windll.kernel32.WriteConsoleA(h, c_char_p(c), len(c), None, None)
+
+    #         print_at(0, 0, "")
+    #     # end code from "Terminal control/Cursor positioning - Rosetta Code
+    #     ###########################################################################
+    # elif (os.name == 'posix'):
+    #     # https://rosettacode.org/wiki/Terminal_control/Cursor_positioning#Python
+    #     # Using ANSI escape sequence, where ESC[y;xH moves curser to row y, col x:
+    #     print("\033[0;0")
+
+        
+
+
+    #     #print('%s%s%s%s' % (pos(MINY, MINX), Fore.WHITE, Back.BLACK, Style.NORMAL), end='')
+        
+    # else:
+    #     exit(-1)
 
 
 # START code from https://code.activestate.com/recipes/134892/
