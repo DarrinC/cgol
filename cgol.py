@@ -25,6 +25,12 @@ if (os.name == 'nt'):
 elif (os.name == 'posix'):
     import tty
 
+# Colorama
+# https://pypi.org/project/colorama/#description
+# Makes ANSI escape character sequences (for producing colored terminal text and cursor positioning) work under MS Windows.
+
+# from colorama import init
+# init()
 
 debug = 0
 
@@ -370,7 +376,10 @@ def main():
 
 
 
-main()
+if (__name__ == '__main__'):
+    main()
+# else:
+#     print("Since __name__ is not \"__main__\" I'll not execute the code")
 
 """ Conway's Game of Life - Wikipedia
 
