@@ -53,7 +53,7 @@ is "big", the most significant byte is at the beginning of the byte array. If by
 byte order of the host system, use sys.byteorder as the byte order value.
 
 The signed argument indicates whether two’s complement is used to represent the integer.
- """
+"""
 
 def int_from_bytes(i):
     return int.from_bytes(i, "big")
@@ -194,7 +194,7 @@ def display_field(dfField, size):
 
     #print('> <-- cursor homed  ', end=' ')
     #exit(-1)
-
+    print('     ', end = '')
     for col in range(1, size):
         if ((col % 10) == 0):
             print(int(col / 10), end = ' ')
@@ -218,7 +218,7 @@ def display_field(dfField, size):
             # ◌ □ ■  ▪▫ . . ┼ ˖
 
             if dfField[col][row] == 0:
-                print('˖ ', end = '')
+                print('. ', end = '')
                 #print(dfField[col][row], end = ' ')
             else:
                 print('■ ', end = '')
