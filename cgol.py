@@ -68,10 +68,12 @@ def int_from_bytes(i):
     return int.from_bytes(i, "big")
 
 def home_cursor():
-
-    print(Cursor.POS(1, 1), end = '')
-
-    return
+    if (os.name == 'nt'):
+        print(Cursor.POS(1, 1), end = '')
+    elif (os.name == 'posix'):
+        print("\033[?25l", end = '')
+    else:
+        exit('home_cursor: unknown os.name:(' + os.name + ')')
 
     # if (os.name == 'nt'):
     #     ###########################################################################
