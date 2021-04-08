@@ -71,9 +71,16 @@ def home_cursor():
     if (os.name == 'nt'):
         print(Cursor.POS(1, 1), end = '')
     elif (os.name == 'posix'):
-        print("\033[?25l", end = '')
+        os.system('clear')  # workaround for broken platforms (iOS), WSL
     else:
         exit('home_cursor: unknown os.name:(' + os.name + ')')
+
+    # if (os.name == 'nt'):
+    #     print(Cursor.POS(1, 1), end = '')
+    # elif (os.name == 'posix'):
+    #     print("\033[?25l", end = '')
+    # else:
+    #     exit('home_cursor: unknown os.name:(' + os.name + ')')
 
     # if (os.name == 'nt'):
     #     ###########################################################################
@@ -133,13 +140,15 @@ screen."""
 class _GetchUnix:
     def __init__(self):
         import tty, sys
-
+    
     def __call__(self):
         import sys, tty, termios
         fd = sys.stdin.fileno()
+        fd = 0 # workaround for "AttributeError: 'StdoutCatcher' object has no attribute 'fileno'" on iOS
         old_settings = termios.tcgetattr(fd)
         try:
-            tty.setraw(sys.stdin.fileno())
+            #tty.setraw(sys.stdin.fileno())
+            tty.setraw(0)
             ch = sys.stdin.read(1)
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
@@ -190,11 +199,11 @@ def display_field(dfField, size):
 
     #if(debug != 1):
     #    clear_screen()
-# moved up # from ctypes import *
+    # moved up # from ctypes import *
 
     home_cursor()
 
-    #print('> <-- cursor homed  ', end=' ')
+    #print('<-- cursor homed  ' + os.name, end=' ')
     #exit(-1)
     print('     ', end = '')
     for col in range(1, size):
@@ -353,7 +362,7 @@ def main():
 
     inputchar = ' '
     #debugcounter = 0
-    while (True):
+    while True:
         display_field(afield, size)
         print('Choose:')
         print('e - edit starting position')
