@@ -7,12 +7,19 @@ import sys
 # >>> sys.hexversion
 # 50596592
 
-# require at least python 3.4.10
+# require at least python 3.7
 
-minimum_python_version = 50596592 # 
+# Python 3.7.5 (default, Nov 14 2019, 22:26:37) 
+# [GCC 5.4.0 20160609] on linux
+# Type "help", "copyright", "credits" or "license" for more information.
+# >>> import sys
+# >>> sys.hexversion
+# 50791920
+
+minimum_python_version = 50791920 # 
 
 if (sys.hexversion < minimum_python_version):
-    exit("Minimum Python version for this program is 3.4.10 (50596592)")
+    exit("Minimum Python version for this program is 3.7.5 (50791920) (")
 
 
 import time
@@ -323,14 +330,23 @@ def copy_field(in_field, out_field):
 
     return
 
-def edit_field(in_field, out_field):
+def edit_field(ifield, shapes):
     _MODE_INIT = 1
     _MODE_EDIT = 2
     _MODE_RUN  = 3
 
     mode = _MODE_INIT
 
-    return
+    # load a glider and return for now...
+
+    shape = 'glider'
+
+    for cell in shapes[shape]:
+        ifield[cell[0]][cell[1]] = 1
+    
+    #exit('STOP: testing')
+        
+    return ifield
 
 
 def main():
@@ -354,11 +370,16 @@ def main():
 # random start position ??
 
 # Glider:
-    afield[1][3] = 1
-    afield[3][3] = 1
-    afield[2][4] = 1
-    afield[3][4] = 1
-    afield[2][5] = 1
+    shapes = { 
+        #{k1: value1, k2: v2}
+        'glider': ( (1,3), (3,3), (2,4), (3,4), (2,5), ),
+
+    }
+    # afield[1][3] = 1
+    # afield[3][3] = 1
+    # afield[2][4] = 1
+    # afield[3][4] = 1
+    # afield[2][5] = 1
 
     inputchar = ' '
     #debugcounter = 0
@@ -375,8 +396,8 @@ def main():
         # inputchar = 'q'
 
         if (inputchar == 'e'):
-            edit_field(afield, bfield)
-            copy_field(afield, bfield)
+            afield = edit_field(afield, shapes)
+            # copy_field(afield, bfield)
         elif (inputchar == 'q'):
             #crap = 1 / 0
             #print('You entered[', inputchar, ']')
