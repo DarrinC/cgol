@@ -317,36 +317,79 @@ def process_field(in_field, out_field):
             #print('.')
     #return
 
-def copy_field(in_field, out_field):
+def copy_field(target, something):
     # ASSUMES: square grid
-    grid_len = len(in_field[0])
+    grid_len = len(something[0])
 
     if (debug == 1):
         print('grid_len', grid_len)
 
     for row in range(0, grid_len):
         for col in range(0, grid_len):
-            in_field[col][row] = out_field[col][row]
+            target[col][row] = something[col][row]
 
     return
 
-def edit_field(ifield, shapes):
-    _MODE_INIT = 1
-    _MODE_EDIT = 2
-    _MODE_RUN  = 3
+def edit_field(ifield, shapes, size):
+    _MODE_INIT       = 1
+    _MODE_MOVE_SHAPE = 2
+    _MODE_RUN        = 3
 
     mode = _MODE_INIT
+    tfield = init_field(size)
 
-    # load a glider and return for now...
+    copy_field(target = tfield, something = ifield)
 
-    shape = 'glider'
+    for shape in shapes:
+        print(shape)
+    shape_choice = input('Choose shape name or type "q"')
 
-    for cell in shapes[shape]:
-        ifield[cell[0]][cell[1]] = 1
-    
-    #exit('STOP: testing')
+    if shape_choice in shapes:
+        mode = _MODE_MOVE_SHAPE
+
+        sx = sy = 0
         
-    return ifield
+        k = ''
+        while k != 'q':
+            # remove and replace shape
+
+            def cf_restore_shape():
+                for cell in shapes[shape_choice]:
+                    tfield[cell[0] + sx][cell[1] + sy] = ifield[cell[0] + sx][cell[1] + sy]
+
+            cf_restore_shape()
+
+            for cell in shapes[shape_choice]:
+                tfield[cell[0] + sx][cell[1] + sy] = 1
+
+            display_field(tfield, size)
+            k = input('Type i j k l to move the shape up, left, down right or type q:')
+
+            if k == 'i':
+                cf_restore_shape()
+                sy = (sy - 1) % size
+            elif k == 'j':
+                cf_restore_shape()
+                sx = (sx - 1) % size
+            elif k == 'k':
+                cf_restore_shape()
+                sy = (sy + 1) % size
+            elif k == 'l':
+                cf_restore_shape()
+                sx = (sx + 1) % size
+        return tfield
+                
+
+
+
+    # while mode != _MODE_RUN do:
+
+    #     for cell in shapes[shape]:
+    #         ifield[cell[0]][cell[1]] = 1
+        
+        #exit('STOP: testing')
+        
+    return tfield
 
 
 def main():
@@ -373,7 +416,6 @@ def main():
     shapes = { 
         #{k1: value1, k2: v2}
         'glider': ( (1,3), (3,3), (2,4), (3,4), (2,5), ),
-
     }
     # afield[1][3] = 1
     # afield[3][3] = 1
@@ -396,14 +438,15 @@ def main():
         # inputchar = 'q'
 
         if (inputchar == 'e'):
-            afield = edit_field(afield, shapes)
+            afield = edit_field(afield, shapes, size)
             # copy_field(afield, bfield)
         elif (inputchar == 'q'):
             #crap = 1 / 0
             #print('You entered[', inputchar, ']')
             sys.exit(1)
-        elif (inputchar == 'r'):
-            # print('You entered[', inputchar, ']')
+        elif (inputchar == 'r'):   
+            #test code # for cell in shapes['glider']:
+            #          #     afield[cell[0] + 0][cell[1] + 0] = 1
             while (True):
                 # print('while loop [', inputchar, ']')
                 display_field(afield, size)
