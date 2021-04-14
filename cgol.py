@@ -330,21 +330,28 @@ def copy_field(target, something):
 
     return
 
-def edit_field(ifield, shapes, size):
+def edit_field(ifield, patterns, size):
     _MODE_INIT       = 1
     _MODE_MOVE_SHAPE = 2
     _MODE_RUN        = 3
+
+    # TEST DATA vvvvvvvvvvvvvvv
+    patterns = { 
+        #{k1: value1, k2: v2}
+        'glider': ( (1,3), (3,3), (2,4), (3,4), (2,5), ),
+    }
+    # TEST DATA ^^^^^^^^^^^^^^
 
     mode = _MODE_INIT
     tfield = init_field(size)
 
     copy_field(target = tfield, something = ifield)
 
-    for shape in shapes:
+    for shape in patterns:
         print(shape)
-    shape_choice = input('Choose shape name or type "q"')
+    pattern_choice = input('Choose shape name or type "q"')
 
-    if shape_choice in shapes:
+    if pattern_choice in patterns:
         mode = _MODE_MOVE_SHAPE
 
         sx = sy = 0
@@ -354,12 +361,12 @@ def edit_field(ifield, shapes, size):
             # remove and replace shape
 
             def cf_restore_shape():
-                for cell in shapes[shape_choice]:
+                for cell in patterns[pattern_choice]:
                     tfield[cell[0] + sx][cell[1] + sy] = ifield[cell[0] + sx][cell[1] + sy]
 
             cf_restore_shape()
 
-            for cell in shapes[shape_choice]:
+            for cell in patterns[pattern_choice]:
                 tfield[cell[0] + sx][cell[1] + sy] = 1
 
             display_field(tfield, size)
@@ -384,12 +391,33 @@ def edit_field(ifield, shapes, size):
 
     # while mode != _MODE_RUN do:
 
-    #     for cell in shapes[shape]:
+    #     for cell in patterns[shape]:
     #         ifield[cell[0]][cell[1]] = 1
         
         #exit('STOP: testing')
         
     return tfield
+
+def read_pattern_files():
+    import os.path as path
+    pattern_files_directory = 'C:\\Users\\me\\WORK_Non-Music\\IT\\python\\projects\\conway_game_of_life\\pattern_files\\conwaylife.com'
+
+    pattern_file_list = (
+        'blinker.cells',
+        'block.cells',
+        'eater1.cells',
+        'glider.cells',
+        'gosperglidergun.cells',
+        'herschel.cells',
+        'switchengine.cells',
+    )
+
+    # from https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+    raw_pattern_data = [[]]
+    for pfile in pattern_file_list:
+        with open(path.join(pattern_files_directory, pfile), 'r') as f:
+            raw_pattern_data.append(list(f.read()))
+    return
 
 
 def main():
@@ -413,7 +441,7 @@ def main():
 # random start position ??
 
 # Glider:
-    shapes = { 
+    patterns = { 
         #{k1: value1, k2: v2}
         'glider': ( (1,3), (3,3), (2,4), (3,4), (2,5), ),
     }
@@ -422,6 +450,8 @@ def main():
     # afield[2][4] = 1
     # afield[3][4] = 1
     # afield[2][5] = 1
+
+    patterns = read_pattern_files()
 
     inputchar = ' '
     #debugcounter = 0
@@ -438,14 +468,14 @@ def main():
         # inputchar = 'q'
 
         if (inputchar == 'e'):
-            afield = edit_field(afield, shapes, size)
+            afield = edit_field(afield, patterns, size)
             # copy_field(afield, bfield)
         elif (inputchar == 'q'):
             #crap = 1 / 0
             #print('You entered[', inputchar, ']')
             sys.exit(1)
         elif (inputchar == 'r'):   
-            #test code # for cell in shapes['glider']:
+            #test code # for cell in patterns['glider']:
             #          #     afield[cell[0] + 0][cell[1] + 0] = 1
             while (True):
                 # print('while loop [', inputchar, ']')
