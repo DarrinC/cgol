@@ -400,7 +400,7 @@ def edit_field(ifield, patterns, size):
 
 def read_pattern_files():
     import os.path as path
-    pattern_files_directory = 'pattern_files\\conwaylife.com'
+    pattern_files_directory = 'pattern_files/conwaylife.com'
 
     pattern_file_list = (
         'blinker.cells',
